@@ -1,8 +1,8 @@
 # MineTools4J
 
-An open source Java Interface for api.minetools.eu, written for Java 8.
+An open source Java interface for api.minetools.eu, written for Java 8.
 
-[![License](https://img.shields.io/badge/license-GNU--3.0-yellow.svg?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/badge/license-GPL--3.0-yellow.svg?style=flat-square)](LICENSE)
 
 ## Table of Contents
 

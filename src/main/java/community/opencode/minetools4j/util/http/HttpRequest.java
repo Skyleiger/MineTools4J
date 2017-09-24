@@ -32,13 +32,19 @@ public class HttpRequest {
 
         HttpURLConnection connection = (HttpURLConnection) newUrl.openConnection();
         connection.setRequestMethod(requestBuilder.getMethod().getType());
-        requestBuilder.getHeaders().forEach(connection::setRequestProperty);
-        connection.setConnectTimeout(5000);
-        connection.setReadTimeout(5000);
-        connection.setDoOutput(true);
 
-        DataOutputStream out = new DataOutputStream(connection.getOutputStream());
-        out.writeBytes(getParametersString(requestBuilder.getParams()));
+        if (requestBuilder.getHeaders().size() != 0)
+            requestBuilder.getHeaders().forEach(connection::setRequestProperty);
+
+        connection.setConnectTimeout(15000);
+        connection.setReadTimeout(15000);
+        connection.setInstanceFollowRedirects(false);
+        connection.setAllowUserInteraction(false);
+
+        if (requestBuilder.getParams().size() != 0) {
+            DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+            out.writeBytes(getParametersString(requestBuilder.getParams()));
+        }
 
         int status = connection.getResponseCode();
         String result = IOUtils.toString(connection.getInputStream(), "UTF-8");

@@ -101,7 +101,7 @@ public class MineTools4J {
         return false;
     }
 
-    public ServerPing getServerPing(@NonNull String host, @NonNull int port) {
+    public ServerPing getServerPing(@NonNull final String host, @NonNull final int port) {
 
         try {
             HttpRequest.RequestResponse requestResponse = HttpRequest.performRequest(new HttpRequest.RequestBuilder(API_URI + "/ping/" + host + "/" + port, HttpRequestMethod.GET));
@@ -150,6 +150,68 @@ public class MineTools4J {
 
         } catch (IOException exception) {
             System.out.println("[MineTools4J] Could not perform http request to '" + API_URI + "/ping/" + host + "/" + port + "': " + exception.getCause());
+            return null;
+        }
+
+    }
+
+    public String getPlayerName(final UUID uuid) {
+        try {
+            HttpRequest.RequestResponse requestResponse = HttpRequest.performRequest(new HttpRequest.RequestBuilder(API_URI + "/uuid/" + uuid.toString().replaceAll("-", ""), HttpRequestMethod.GET));
+
+            JsonObject jsonObject = GSON.fromJson(requestResponse.getResultMessage(), JsonObject.class);
+
+            if (jsonObject.has("error") || jsonObject.has("errorMessage")) {
+                System.out.println("[MineTools4J] Could not get player name from '" + uuid.toString().replaceAll("-", "") + "': " + jsonObject.get("errorMessage").getAsString());
+                return null;
+            }
+
+            return jsonObject.get("name").getAsString();
+
+        } catch (IOException exception) {
+            System.out.println("[MineTools4J] Could not perform http request to '" + API_URI + "/uuid/" + uuid.toString().replaceAll("-", "") + "': " + exception.getCause());
+            return null;
+        }
+
+    }
+
+    public String getPlayerName(final String uuid) {
+        try {
+            HttpRequest.RequestResponse requestResponse = HttpRequest.performRequest(new HttpRequest.RequestBuilder(API_URI + "/uuid/" + uuid.replaceAll("-", ""), HttpRequestMethod.GET));
+
+            JsonObject jsonObject = GSON.fromJson(requestResponse.getResultMessage(), JsonObject.class);
+
+            if (jsonObject.has("error") || jsonObject.has("errorMessage")) {
+                System.out.println("[MineTools4J] Could not get player name from '" + uuid.replaceAll("-", "") + "': " + jsonObject.get("errorMessage").getAsString());
+                return null;
+            }
+
+            return jsonObject.get("name").getAsString();
+
+        } catch (IOException exception) {
+            System.out.println("[MineTools4J] Could not perform http request to '" + API_URI + "/uuid/" + uuid.replaceAll("-", "") + "': " + exception.getCause());
+            return null;
+        }
+
+    }
+
+    public UUID getPlayerUUID(final String name) {
+        try {
+            HttpRequest.RequestResponse requestResponse = HttpRequest.performRequest(new HttpRequest.RequestBuilder(API_URI + "/uuid/" + name, HttpRequestMethod.GET));
+
+            JsonObject jsonObject = GSON.fromJson(requestResponse.getResultMessage(), JsonObject.class);
+
+            if (jsonObject.has("error") || jsonObject.has("errorMessage")) {
+                System.out.println("[MineTools4J] Could not get player uuid from '" + name + "': " + jsonObject.get("errorMessage").getAsString());
+                return null;
+            }
+
+            return UUID.fromString(jsonObject.get("id").getAsString().replaceFirst(
+                    "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5"
+            ));
+
+        } catch (IOException exception) {
+            System.out.println("[MineTools4J] Could not perform http request to '" + API_URI + "/uuid/" + name + "': " + exception.getCause());
             return null;
         }
 

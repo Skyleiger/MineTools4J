@@ -41,7 +41,8 @@ public class HttpRequest {
         connection.setInstanceFollowRedirects(false);
         connection.setAllowUserInteraction(false);
 
-        if (requestBuilder.getParams().size() != 0) {
+        if (requestBuilder.method == HttpRequestMethod.POST && requestBuilder.getParams().size() != 0) {
+            connection.setDoOutput(true);
             DataOutputStream out = new DataOutputStream(connection.getOutputStream());
             out.writeBytes(getParametersString(requestBuilder.getParams()));
         }

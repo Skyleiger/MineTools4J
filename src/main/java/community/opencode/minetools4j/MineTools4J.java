@@ -30,7 +30,7 @@ public class MineTools4J {
 
     public static void main(String[] args) {
 
-        if (args.length == 0 || args[0].equalsIgnoreCase("test")) {
+        if (args.length == 0 || !args[0].equalsIgnoreCase("test")) {
             System.out.println("[MineTools4J] This is an API and can't run standalone. If you want to test the API, please add the argument 'test'.");
             System.out.println("[MineTools4J] The process will exit now...");
             System.exit(0);

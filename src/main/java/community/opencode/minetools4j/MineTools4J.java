@@ -10,6 +10,8 @@ import community.opencode.minetools4j.util.serverping.ServerPing;
 import community.opencode.minetools4j.util.serverping.Version;
 import lombok.Getter;
 import lombok.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -25,49 +27,47 @@ import java.util.UUID;
 @Getter
 public class MineTools4J {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger("MineTools4J");
     public static final String API_URI = "https://api.minetools.eu";
     public static final Gson GSON = new Gson();
 
     public static void main(String[] args) {
 
         if (args.length == 0 || !args[0].equalsIgnoreCase("test")) {
-            System.out.println("[MineTools4J] This is an API and can't run standalone. If you want to test the API, please add the argument 'test'.");
-            System.out.println("[MineTools4J] The process will exit now...");
+            LOGGER.warn("This is an API and can't run standalone. If you want to test the API, please add the argument 'test'.");
+            LOGGER.info("The process will exit now...");
             System.exit(0);
         } else {
 
             MineTools4J mineTools4J = new MineTools4J();
 
-            System.out.println("[MineTools4J] Found the 'test' argument... the test mode will be activated...");
-            System.out.println("");
-            System.out.println("[MineTools4J] The ping test will be started...");
+            LOGGER.info("Found the 'test' argument... the test mode will be activated...");
+            LOGGER.info("");
+            LOGGER.info("The ping test will be started...");
 
             if (mineTools4J.pingAPI()) {
-                System.out.println("[MineTools4J] The ping test was sucessfull.");
-                System.out.println("");
-                System.out.println("[MineTools4J] The ready test will be started...");
+                LOGGER.info("The ping test was sucessfull.");
+                LOGGER.info("");
+                LOGGER.info("The ready test will be started...");
 
                 if (mineTools4J.isAPIReady()) {
-                    System.out.println("[MineTools4J] The ready test was sucessfull.");
-                    System.out.println("");
-                    System.out.println("[MineTools4J] The API works correctly. You can use it at the moment.");
-
-                    System.out.println(mineTools4J.getPlayerName(UUID.fromString("39f79b73-992e-43f3-8950-ae005bd3f718")));
-                    System.out.println(mineTools4J.getPlayerName("39f79b73-992e-43f3-8950-ae005bd3f718"));
+                    LOGGER.info("The ready test was sucessfull.");
+                    LOGGER.info("");
+                    LOGGER.info("The API works correctly. You can use it at the moment.");
                 } else {
-                    System.out.println("[MineTools4J] The ready test was not sucessfull.");
-                    System.out.println("");
-                    System.out.println("[MineTools4J] The API do not work correctly. Please try again later.");
+                    LOGGER.error("The ready test was not sucessfull.");
+                    LOGGER.error("");
+                    LOGGER.error("The API do not work correctly. Please try again later.");
                 }
 
             } else {
-                System.out.println("[MineTools4J] The ping test was not sucessfull.");
-                System.out.println("");
-                System.out.println("[MineTools4J] The API do not work correctly. Please try again later.");
+                LOGGER.error("The ping test was not sucessfull.");
+                LOGGER.error("");
+                LOGGER.error("The API do not work correctly. Please try again later.");
             }
 
-            System.out.println("");
-            System.out.println("[MineTools4J] The process will exit now...");
+            LOGGER.info("");
+            LOGGER.info("The process will exit now...");
             System.exit(0);
 
         }
@@ -112,7 +112,7 @@ public class MineTools4J {
             JsonObject jsonObject = GSON.fromJson(requestResponse.getResultMessage(), JsonObject.class);
 
             if (jsonObject.has("error")) {
-                System.out.println("[MineTools4J] Could not get server ping from '" + host + "' on port '" + port + "': " + jsonObject.get("error").getAsString());
+                LOGGER.error("Could not get server ping from '" + host + "' on port '" + port + "': " + jsonObject.get("error").getAsString());
                 return null;
             }
 
@@ -152,7 +152,7 @@ public class MineTools4J {
             );
 
         } catch (IOException exception) {
-            System.out.println("[MineTools4J] Could not perform http request to '" + API_URI + "/ping/" + host + "/" + port + "': " + exception.getCause());
+            LOGGER.error("Could not perform http request to '" + API_URI + "/ping/" + host + "/" + port + "': " + exception.getCause());
             return null;
         }
 
@@ -165,14 +165,14 @@ public class MineTools4J {
             JsonObject jsonObject = GSON.fromJson(requestResponse.getResultMessage(), JsonObject.class);
 
             if (jsonObject.has("error") || jsonObject.has("errorMessage")) {
-                System.out.println("[MineTools4J] Could not get player name from '" + uuid.toString().replace("-", "") + "': " + jsonObject.get("errorMessage").getAsString());
+                LOGGER.error("Could not get player name from '" + uuid.toString().replace("-", "") + "': " + jsonObject.get("errorMessage").getAsString());
                 return null;
             }
 
             return jsonObject.get("name").getAsString();
 
         } catch (IOException exception) {
-            System.out.println("[MineTools4J] Could not perform http request to '" + API_URI + "/uuid/" + uuid.toString().replace("-", "") + "': " + exception.getCause());
+            LOGGER.error("Could not perform http request to '" + API_URI + "/uuid/" + uuid.toString().replace("-", "") + "': " + exception.getCause());
             return null;
         }
 
@@ -185,14 +185,14 @@ public class MineTools4J {
             JsonObject jsonObject = GSON.fromJson(requestResponse.getResultMessage(), JsonObject.class);
 
             if (jsonObject.has("error") || jsonObject.has("errorMessage")) {
-                System.out.println("[MineTools4J] Could not get player name from '" + uuid.replace("-", "") + "': " + jsonObject.get("errorMessage").getAsString());
+                LOGGER.error("Could not get player name from '" + uuid.replace("-", "") + "': " + jsonObject.get("errorMessage").getAsString());
                 return null;
             }
 
             return jsonObject.get("name").getAsString();
 
         } catch (IOException exception) {
-            System.out.println("[MineTools4J] Could not perform http request to '" + API_URI + "/uuid/" + uuid.replace("-", "") + "': " + exception.getCause());
+            LOGGER.error("Could not perform http request to '" + API_URI + "/uuid/" + uuid.replace("-", "") + "': " + exception.getCause());
             return null;
         }
 
@@ -205,7 +205,7 @@ public class MineTools4J {
             JsonObject jsonObject = GSON.fromJson(requestResponse.getResultMessage(), JsonObject.class);
 
             if (jsonObject.has("error") || jsonObject.has("errorMessage")) {
-                System.out.println("[MineTools4J] Could not get player uuid from '" + name + "': " + jsonObject.get("errorMessage").getAsString());
+                LOGGER.error("Could not get player uuid from '" + name + "': " + jsonObject.get("errorMessage").getAsString());
                 return null;
             }
 
@@ -214,7 +214,7 @@ public class MineTools4J {
             ));
 
         } catch (IOException exception) {
-            System.out.println("[MineTools4J] Could not perform http request to '" + API_URI + "/uuid/" + name + "': " + exception.getCause());
+            LOGGER.error("Could not perform http request to '" + API_URI + "/uuid/" + name + "': " + exception.getCause());
             return null;
         }
 

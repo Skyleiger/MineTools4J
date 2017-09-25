@@ -51,9 +51,6 @@ public class MineTools4J {
                     System.out.println("[MineTools4J] The ready test was sucessfull.");
                     System.out.println("");
                     System.out.println("[MineTools4J] The API works correctly. You can use it at the moment.");
-
-                    System.out.println(mineTools4J.getPlayerName(UUID.fromString("39f79b73-992e-43f3-8950-ae005bd3f718")));
-                    System.out.println(mineTools4J.getPlayerName("39f79b73-992e-43f3-8950-ae005bd3f718"));
                 } else {
                     System.out.println("[MineTools4J] The ready test was not sucessfull.");
                     System.out.println("");
